@@ -18,10 +18,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	
+
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
-
 
 	userHandler := handler.NewUserHandler(userService)
 
@@ -31,6 +30,7 @@ func main() {
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
+	api.POST("/avatars", userHandler.UploadAvatar)
 
 	router.Run()
 
@@ -40,7 +40,7 @@ func main() {
 	// userInput.Occupation = "model"
 	// userInput.Password = "lempuyangansambelijo"
 	// userService.RegisterUser(userInput)
-	
+
 }
 
 // input dari user
@@ -48,4 +48,3 @@ func main() {
 // Service : melakukan mapping dari stuct input ke struct user ->
 //repository
 //db
-
