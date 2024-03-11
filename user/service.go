@@ -10,7 +10,8 @@ type Service interface {
 	RegisterUser(input RegisterUserInput) (User, error)
 	Login(input LoginInput) (User, error)
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
-	SaveAvatar(ID int , fileLocation string) (User, error)
+	SaveAvatar(ID int, fileLocation string) (User, error)
+	GetUserByID(ID int) (User, error)
 }
 
 type service struct {
@@ -24,7 +25,7 @@ func NewService(repository Repository) *service {
 func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	user := User{}
 	user.Name = input.Name
-	user.Email= input.Email
+	user.Email = input.Email
 	user.Occupation = input.Occupation
 
 	// Hashing the password
@@ -34,9 +35,8 @@ func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	}
 
 	user.PasswordHash = string(passwordHash)
-	user.Role ="user"
-	
-	
+	user.Role = "user"
+
 	// Saving the user through the repository
 	newUser, err := s.repository.Save(user)
 	if err != nil {
@@ -45,7 +45,7 @@ func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	return newUser, nil
 }
 
-func (s *service)Login(input LoginInput) (User, error) {
+func (s *service) Login(input LoginInput) (User, error) {
 	email := input.Email
 	password := input.Password
 	user, err := s.repository.FindByEmail(email)
@@ -53,7 +53,7 @@ func (s *service)Login(input LoginInput) (User, error) {
 		return user, err
 	}
 	if user.ID == 0 {
-		return user , errors.New("No User Found On That Email")
+		return user, errors.New("No User Found On That Email")
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
@@ -61,9 +61,10 @@ func (s *service)Login(input LoginInput) (User, error) {
 	}
 	return user, nil
 }
+
 // mapping struct input ke struct User
 
-func (s *service) IsEmailAvailable (input CheckEmailInput) (bool, error){
+func (s *service) IsEmailAvailable(input CheckEmailInput) (bool, error) {
 	email := input.Email
 	user, err := s.repository.FindByEmail(email)
 	if err != nil {
@@ -75,21 +76,32 @@ func (s *service) IsEmailAvailable (input CheckEmailInput) (bool, error){
 	return false, nil
 }
 
-func (s *service) SaveAvatar(ID int , fileLocation string) (User ,error){
-//dapatkan use berdasarkan ID
-// updare attribute avatar file name
-// simpan perubahan avatar file name
+func (s *service) SaveAvatar(ID int, fileLocation string) (User, error) {
+	//dapatkan use berdasarkan ID
+	// updare attribute avatar file name
+	// simpan perubahan avatar file name
 
-	user ,err := s.repository.FindByID(ID)
+	user, err := s.repository.FindByID(ID)
 	if err != nil {
 
-	return user,err
+		return user, err
 
 	}
 	user.AvatarFileName = fileLocation
-	updateUser,err := s.repository.Update(user)
+	updateUser, err := s.repository.Update(user)
 	if err != nil {
-		return updateUser,err
-		}
+		return updateUser, err
+	}
 	return updateUser, nil
+}
+
+func (s *service) GetUserByID(ID int) (User, error) {
+	user, err := s.repository.FindByID(ID)
+	if err != nil {
+		return user, err
+	}
+	if user.ID == 0 {
+		return user, errors.New("No User Found On That ID")
+	}
+	return user, nil
 }

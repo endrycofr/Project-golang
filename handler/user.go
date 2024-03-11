@@ -142,7 +142,8 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 	//harus JWT dapatnya
-	userID := 5
+	currentUser := c.MustGet("currentUser").(user.User)
+	userID := currentUser.ID
 
 	//lama images/namafile.png
 
