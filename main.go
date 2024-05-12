@@ -18,7 +18,7 @@ import (
 
 func main() {
 	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-	dsn := "root:root@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:End291103#@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -95,7 +95,9 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 			return
 		}
 		c.Set("currentUser", user)
+
 	}
+
 }
 
 //ambil nilai header Authorization : Bearer tokentoken dari GenerateToken
