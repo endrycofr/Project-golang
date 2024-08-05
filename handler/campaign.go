@@ -4,6 +4,7 @@ import (
 	"bwastartup/campaign"
 	"bwastartup/helper"
 	"bwastartup/user"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -132,3 +133,58 @@ func (h *campaigHandler) UpdateCampaign(c *gin.Context) {
 // input dari user dan juga input yang ada di uri (passing ke service)
 // service
 // repository update data campaign
+
+func (h *campaigHandler) UploadImage(c *gin.Context) {
+	var input campaign.CreateCampaignImageInput
+
+	// Bind the input to the struct and handle any validation errors
+	if err := c.ShouldBind(&input); err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", errorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+	userID := currentUser.ID
+	// Retrieve the file from the form
+	file, fileErr := c.FormFile("file")
+	if fileErr != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
+
+	// Save the uploaded file
+	if saveErr := c.SaveUploadedFile(file, path); saveErr != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// Save the campaign image information in the service
+
+	if _, err := h.service.SaveCampaignImage(input, path); err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// Return a successful response
+	data := gin.H{"is_uploaded": true}
+	response := helper.APIResponse("Campaign image successfully uploaded", http.StatusOK, "success", data)
+	c.JSON(http.StatusOK, response)
+}
+
+// handler
+// tangkap input dan ubah struct inputsave image ke dalam folder
+// service (pada kondisi manggil point 2 repository, panggil repository point 1)
+// repository:
+// 1. create image /Save data image ke dalam tabel campaign_images
+// 2. ubah is_primary true ke false

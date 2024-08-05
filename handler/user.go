@@ -150,7 +150,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	//harusnya images/5-namafile.png
 
 	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
-	c.SaveUploadedFile(file, path)
+	err = c.SaveUploadedFile(file, path)
 	if err != nil {
 		data := gin.H{"is_uplouded": false}
 		response := helper.APIResponse("Failed to upload avatar image", http.StatusBadRequest, "error", data)
