@@ -22,15 +22,58 @@ func FormatCampaignTransaction(transaction Transaction) CampaignTransactionForma
 
 func FormatCampaignTransactions(transactions []Transaction) []CampaignTransactionFormatter {
 	if len(transactions) == 0 {
-		return nil // instead of an empty slice, return nil to indicate no results
+		return []CampaignTransactionFormatter{} // instead of an empty slice, return nil to indicate no results
 	}
-
-	formatters := make([]CampaignTransactionFormatter, 0, len(transactions)) // pre-allocate the slice
+	var transactionsFormatter []CampaignTransactionFormatter
 
 	for _, transaction := range transactions {
 		formatter := FormatCampaignTransaction(transaction)
-		formatters = append(formatters, formatter)
+		transactionsFormatter = append(transactionsFormatter, formatter)
 	}
 
-	return formatters
+	return transactionsFormatter
+}
+
+type UserTransactionFormatter struct {
+	ID        int               `json:"id"`
+	Amount    int               `json:"amount"`
+	Status    string            `json:"status"`
+	CreatedAt time.Time         `json:"created_at"`
+	Campaign  CampaignFormatter `json:"campaign"`
+}
+type CampaignFormatter struct {
+	Name      string `json:"name"`
+	ImagesURL string `json:"image_url"`
+}
+
+func FormatUserTransaction(transaction Transaction) UserTransactionFormatter {
+
+	formatter := UserTransactionFormatter{}
+	formatter.ID = transaction.ID
+	formatter.Amount = transaction.Amount
+	formatter.Status = transaction.Status
+	formatter.CreatedAt = transaction.CreatedAt
+
+	campaignFormatter := CampaignFormatter{}
+	campaignFormatter.Name = transaction.Campaign.Name
+	campaignFormatter.ImagesURL = ""
+	if len(transaction.Campaign.CampaignImages) > 0 {
+		campaignFormatter.ImagesURL = transaction.Campaign.CampaignImages[0].FileName
+	}
+	formatter.Campaign = campaignFormatter
+	return formatter
+
+}
+func FormatUserTransactions(transactions []Transaction) []UserTransactionFormatter {
+	if len(transactions) == 0 {
+		return []UserTransactionFormatter{} // instead of an empty slice, return nil to indicate no results
+	}
+	var transactionsFormatter []UserTransactionFormatter
+
+	for _, transaction := range transactions {
+		formatter := FormatUserTransaction(transaction)
+		transactionsFormatter = append(transactionsFormatter, formatter)
+	}
+
+	return transactionsFormatter
 }
