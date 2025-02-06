@@ -9,6 +9,9 @@
 # Database: bwastartup
 # Generation Time: 2020-09-23 13:46:56 +0000
 # ************************************************************
+CREATE USER 'root'@'%' IDENTIFIED BY 'End291103#';
+GRANT ALL PRIVILEGES ON bwastartup.* TO 'root'@'%';
+FLUSH PRIVILEGES;
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
