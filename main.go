@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -18,15 +19,30 @@ import (
 	"gorm.io/gorm"
 )
 
-func main() {
-	dsn := "root:End291103#@tcp(mysql_db:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+func connectDatabase() (*gorm.DB, error) {
+	dsn := "root:rootpassword@tcp(mysql_db:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
+	var db *gorm.DB
+	var err error
 
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
+	// Retry loop untuk memastikan koneksi ke database
+	for i := 0; i < 10; i++ {
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		if err == nil {
+			log.Println("Database connected successfully!")
+			return db, nil
+		}
+
+		log.Println("Database connection failed. Retrying in 5 seconds...")
+		time.Sleep(5 * time.Second)
 	}
 
-	log.Println("Database connected successfully!")
+	return nil, err
+}
+func main() {
+	db, err := connectDatabase()
+	if err != nil {
+		log.Fatal("Failed to connect to database after multiple attempts:", err)
+	}
 
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
