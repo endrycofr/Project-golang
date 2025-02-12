@@ -19,13 +19,14 @@ import (
 )
 
 func main() {
-	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-	dsn := "root:End291103#@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:End291103#@tcp(mysql_db:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal("Failed to connect to database:", err)
 	}
+
+	log.Println("Database connected successfully!")
 
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
