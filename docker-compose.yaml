@@ -17,6 +17,7 @@ services:
       - app_network
     expose:
       - "8080"
+
   db:
     image: mysql:8.0
     container_name: mysql_db
@@ -31,11 +32,6 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./bwastartup.sql:/docker-entrypoint-initdb.d/bwastartup.sql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   nginx:
     image: nginx:latest
