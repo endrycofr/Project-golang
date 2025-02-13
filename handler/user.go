@@ -48,7 +48,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	formatter := user.FormatterUser(newUser, token)
+	formatter := user.FormatUser(newUser, token)
 	response := helper.APIResponse("Success register new account", http.StatusOK, "success", formatter)
 
 	c.JSON(http.StatusOK, response)
@@ -85,7 +85,7 @@ func (h *userHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	formatter := user.FormatterUser(loggedinuser, token)
+	formatter := user.FormatUser(loggedinuser, token)
 	response := helper.APIResponse("Successfully loggedin", http.StatusOK, "success", formatter)
 
 	c.JSON(http.StatusOK, response)
@@ -168,6 +168,17 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 
 	data := gin.H{"is_uplouded": true}
 	response := helper.APIResponse("Avatar successfully uploaded", http.StatusOK, "success", data)
+	c.JSON(http.StatusOK, response)
+
+}
+func (h *userHandler) FetchUser(c *gin.Context) {
+
+	currentUser := c.MustGet("currentUser").(user.User)
+
+	formatter := user.FormatUser(currentUser, "")
+
+	response := helper.APIResponse("Successfuly fetch user data", http.StatusOK, "success", formatter)
+
 	c.JSON(http.StatusOK, response)
 
 }
