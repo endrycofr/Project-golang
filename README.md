@@ -45,7 +45,7 @@ Project-golang/
 ```bash
 git clone https://github.com/endrycofr/Project-golang.git
 cd Project-golang
-````
+
 
 ### 2. Setup Database
 
@@ -55,7 +55,7 @@ Buat database di MySQL/PostgreSQL sesuai konfigurasi di file `main.go`.
 
 ```bash
 go run main.go
-```
+
 
 API akan berjalan di `http://localhost:8080`.
 
