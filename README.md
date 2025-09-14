@@ -25,7 +25,7 @@ Project ini nantinya akan terintegrasi dengan frontend menggunakan **Vue.js** un
 
 
 ## 📂 Struktur Project
-```
+
 
 Project-golang/
 ├── handler/         # Handler (controller) untuk API
@@ -35,8 +35,6 @@ Project-golang/
 ├── transaction/     # Modul transaksi & pembayaran
 ├── auth/            # JWT auth middleware
 ├── main.go          # Entry point aplikasi
-
-
 
 
 
@@ -60,7 +58,6 @@ go run main.go
 API akan berjalan di `http://localhost:8080`.
 
 
-
 ## 📡 Endpoint API (sementara)
 
 | Method | Endpoint            | Deskripsi              |
@@ -69,7 +66,6 @@ API akan berjalan di `http://localhost:8080`.
 | POST   | `/api/v1/sessions`  | Login user (JWT token) |
 | GET    | `/api/v1/campaigns` | List campaign          |
 | POST   | `/api/v1/campaigns` | Tambah campaign baru   |
-
 
 
 ## 📅 Roadmap
