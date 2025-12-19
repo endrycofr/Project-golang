@@ -31,7 +31,7 @@ Project-golang/
 ├── transaction/ # Modul transaksi & pembayaran
 ├── auth/ # JWT auth middleware
 ├── main.go # Entry point aplikasi
-```bash
+```
 ## 🚀 Cara Menjalankan
 
 ### 1. Clone Repo
