@@ -3,7 +3,7 @@ package user
 import "gorm.io/gorm"
 
 type Repository interface {
-	// 获取用户信息
+
 	Save(user User) (User, error)
 	FindByEmail(email string) (User, error)
 	FindByID(ID int) (User, error)
