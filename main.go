@@ -3,31 +3,32 @@ package main
 import (
 	"bwastartup/auth"
 	"bwastartup/campaign"
+	"bwastartup/config"
+	"bwastartup/database"
 	"bwastartup/handler"
 	"bwastartup/helper"
 	"bwastartup/payment"
 	"bwastartup/transaction"
 	"bwastartup/user"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 func main() {
+	cfg := config.Load()
+	db := database.Connect(cfg)
 	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-	dsn := "root:End291103#@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
+	// dsn := "root:End291103#@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
 	// dsn := "root@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	// db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	// if err != nil {
+	// 	log.Fatal(err.Error())
+	// }
 
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
