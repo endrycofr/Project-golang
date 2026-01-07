@@ -22,7 +22,7 @@ Project ini nantinya akan terintegrasi dengan frontend menggunakan **Vue.js** un
 - **Frontend**: Vue.js (planned)
 
 ## 📂 Struktur Project
-
+```bash
 Project-golang/
 ├── handler/ # Handler (controller) untuk API
 ├── helper/ # Utility & helper function
@@ -31,7 +31,7 @@ Project-golang/
 ├── transaction/ # Modul transaksi & pembayaran
 ├── auth/ # JWT auth middleware
 ├── main.go # Entry point aplikasi
-
+```
 ## 🚀 Cara Menjalankan
 
 ### 1. Clone Repo
