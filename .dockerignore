@@ -1,0 +1,13 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
