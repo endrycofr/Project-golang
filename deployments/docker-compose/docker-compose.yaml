@@ -1,0 +1,32 @@
+services:
+  app:
+    build:
+      context: ../../
+      dockerfile: deployments/docker/Dockerfile
+      args:
+        BUILD_VERSION: ${BUILD_VERSION:-v1.0.0}
+        BUILD_TIME: ${BUILD_TIME:-2025-01-08}
+
+    image: golang-web-app:${VERSION:-latest}
+    container_name: golang-app
+    restart: unless-stopped
+
+    ports:
+      - "${APP_PORT:-8080}:8080"
+
+    env_file:
+      - ../../.env
+
+    networks:
+      - app-network
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,4 +1,4 @@
-# Stage 1: Build
+# Stage 1: Build and install Dependecies
 FROM golang:1.22-alpine AS builder
 
 RUN apk add --no-cache  ca-certificates tzdata
@@ -15,7 +15,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
     -a -installsuffix cgo \
     -o app .
 
-# Stage 2: Run
+# Stage 2: Run Time
 FROM gcr.io/distroless/static-debian12:nonroot
 
 COPY --from=builder /build/app /app
