@@ -16,7 +16,6 @@ type Config struct {
 	DBName   string
 	DBUser   string
 	DBPass   string
-	DBSSL    string
 }
 
 func Load() *Config {
@@ -37,6 +36,5 @@ func Load() *Config {
 		DBName:   os.Getenv("DB_NAME"),
 		DBUser:   os.Getenv("DB_USER"),
 		DBPass:   os.Getenv("DB_PASS"),
-		DBSSL:    os.Getenv("DB_SSL"),
 	}
 }
