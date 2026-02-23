@@ -7,9 +7,11 @@ import (
 	"bwastartup/database"
 	"bwastartup/handler"
 	"bwastartup/helper"
+	storage "bwastartup/minio"
 	"bwastartup/payment"
 	"bwastartup/transaction"
 	"bwastartup/user"
+	"log"
 	"net/http"
 	"strings"
 
@@ -19,8 +21,18 @@ import (
 )
 
 func main() {
+	// Database connection
 	cfg := config.Load()
 	db := database.Connect(cfg)
+
+	// load minio config & connect
+	cfgMinio := config.LoadMinio()
+	minioClient, err := storage.Connect(cfgMinio)
+	if err != nil {
+		log.Fatal("❌ Failed to connect Minio:", err)
+	}
+	log.Println("✅ MinIO connected")
+
 	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
 	// dsn := "root:End291103#@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
 	// dsn := "root@tcp(127.0.0.1:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
@@ -35,7 +47,7 @@ func main() {
 	transactionRepository := transaction.NewRepository(db)
 
 	userService := user.NewService(userRepository)
-	campaignService := campaign.NewService(campaignRepository)
+	campaignService := campaign.NewService(campaignRepository, minioClient) // inject minio
 	authService := auth.NewService()
 	paymentService := payment.NewService()
 	transactionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)

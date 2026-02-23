@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type Config struct {
+type ConfigDB struct {
 	AppEnv string
 
 	DBDriver string
@@ -18,7 +18,7 @@ type Config struct {
 	DBPass   string
 }
 
-func Load() *Config {
+func Load() *ConfigDB {
 	// Load .env hanya untuk local
 	if os.Getenv("APP_ENV") == "" {
 		err := godotenv.Load()
@@ -27,7 +27,7 @@ func Load() *Config {
 		}
 	}
 
-	return &Config{
+	return &ConfigDB{
 		AppEnv: os.Getenv("APP_ENV"),
 
 		DBDriver: os.Getenv("DB_DRIVER"),
@@ -35,6 +35,7 @@ func Load() *Config {
 		DBPort:   os.Getenv("DB_PORT"),
 		DBName:   os.Getenv("DB_NAME"),
 		DBUser:   os.Getenv("DB_USER"),
-		DBPass:   os.Getenv("DB_PASS"),
+		DBPass:   os.Getenv("DB_PASSWORD"),
 	}
+
 }

@@ -148,28 +148,32 @@ func (h *campaigHandler) UploadImage(c *gin.Context) {
 	currentUser := c.MustGet("currentUser").(user.User)
 	input.User = currentUser
 	userID := currentUser.ID
+
 	// Retrieve the file from the form
 	file, fileErr := c.FormFile("file")
 	if fileErr != nil {
-		data := gin.H{"is_uploaded": false}
-		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
+		response := helper.APIResponse("Failed to get uploaded file", http.StatusBadRequest, "error", gin.H{"is_uploaded": false})
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
+	src, err := file.Open()
+	if err != nil {
+		response := helper.APIResponse("Failed to open file", http.StatusInternalServerError, "error", gin.H{"is_uploaded": false})
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+	defer src.Close()
 	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
-
-	// Save the uploaded file
-	if saveErr := c.SaveUploadedFile(file, path); saveErr != nil {
-		data := gin.H{"is_uploaded": false}
-		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
+	contentType := file.Header.Get("Content-Type")
 
 	// Save the campaign image information in the service
-
-	if _, err := h.service.SaveCampaignImage(input, path); err != nil {
+	fileLocation, err := h.service.UploadMinio(c.Request.Context(), path, src, file.Size, contentType)
+	if err != nil {
+		response := helper.APIResponse("Failed to upload to storage", http.StatusInternalServerError, "error", gin.H{"is_uploaded": false})
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+	if _, err := h.service.SaveCampaignImage(input, fileLocation); err != nil {
 		data := gin.H{"is_uploaded": false}
 		response := helper.APIResponse("Failed to upload campaign image", http.StatusBadRequest, "error", data)
 		c.JSON(http.StatusBadRequest, response)

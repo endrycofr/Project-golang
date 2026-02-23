@@ -12,9 +12,9 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func Connect(cfg *config.Config) *gorm.DB {
+func Connect(cfg *config.ConfigDB) *gorm.DB {
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta",
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require TimeZone=Asia/Jakarta",
 		cfg.DBHost,
 		cfg.DBUser,
 		cfg.DBPass,

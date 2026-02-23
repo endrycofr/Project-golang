@@ -1,7 +1,12 @@
 package campaign
 
 import (
+	miniostorage "bwastartup/minio"
+	"context"
 	"fmt"
+	"io"
+
+	minio "github.com/minio/minio-go/v7" // alias untuk hindari conflict
 
 	"github.com/gosimple/slug"
 )
@@ -12,14 +17,16 @@ type Service interface {
 	CreateCampaign(input CreateCampaignInput) (Campaign, error)
 	UpdateCampaign(inputID GetCampaignDetailInput, inputData CreateCampaignInput) (Campaign, error)
 	SaveCampaignImage(input CreateCampaignImageInput, fileLocation string) (CampaignImage, error)
+	UploadMinio(ctx context.Context, objectName string, reader io.Reader, size int64, contentType string) (string, error)
 }
 
 type service struct {
 	repository Repository
+	minio      *miniostorage.MinioStorage
 }
 
-func NewService(repository Repository) *service {
-	return &service{repository}
+func NewService(repository Repository, minio *miniostorage.MinioStorage) *service {
+	return &service{repository, minio}
 }
 
 func (s *service) GetCampaigns(userID int) ([]Campaign, error) {
@@ -107,10 +114,14 @@ func (s *service) SaveCampaignImage(input CreateCampaignImageInput, fileLocation
 		}
 	}
 
-	campaignImage := CampaignImage{}
-	campaignImage.CampaignID = input.CampaignID
-	campaignImage.IsPrimary = isPrimary
-	campaignImage.FileName = fileLocation
+	campaignImage := CampaignImage{
+		CampaignID: input.CampaignID,
+		IsPrimary:  isPrimary,
+		FileName:   fileLocation, // simpan URL dari MinIO
+	}
+	// campaignImage.CampaignID = input.CampaignID
+	// campaignImage.IsPrimary = isPrimary
+	// campaignImage.FileName = fileLocation
 
 	newCampaignImage, err := s.repository.CreateImage(campaignImage)
 	if err != nil {
@@ -118,3 +129,22 @@ func (s *service) SaveCampaignImage(input CreateCampaignImageInput, fileLocation
 	}
 	return newCampaignImage, nil
 }
+
+// UploadMinio mengunggah file ke MinIO dan mengembalikan URL aksesnya
+func (s *service) UploadMinio(ctx context.Context, objectName string, reader io.Reader, size int64, contentType string) (string, error) {
+	_, err := s.minio.Client.PutObject(ctx, s.minio.BucketName, objectName, reader, size, minio.PutObjectOptions{
+		ContentType: contentType,
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to upload object: %w", err)
+	}
+
+	filename := fmt.Sprintf("https://%s/%s/%s",
+		s.minio.Client.EndpointURL().Host,
+		s.minio.BucketName,
+		objectName,
+	)
+	return filename, nil
+}
+
+//save campaign image dengan upload ke MinIO
