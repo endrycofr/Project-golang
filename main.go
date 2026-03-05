@@ -69,6 +69,12 @@ func main() {
 	router.Use(cors.Default())
 	router.Static("images", "./images")
 	api := router.Group("/api/v1")
+	
+	router.GET("/healthz", func(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"status": "ok",
+	})
+})
 
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
