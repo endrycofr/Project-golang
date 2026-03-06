@@ -68,14 +68,14 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.Default())
 	router.Static("images", "./images")
-	api := router.Group("/api/v1")
-	
-	router.GET("/healthz", func(c *gin.Context) {
+	router.GET("/health", func(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": "ok",
+		})
 	})
-})
 
+	api := router.Group("/api/v1")
+	
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)

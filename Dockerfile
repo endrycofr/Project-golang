@@ -10,8 +10,7 @@ RUN apk add --no-cache ca-certificates tzdata
 
 # Download dependency
 COPY go.mod go.sum ./
-ENV GOPROXY=https://goproxy.cn,direct
-ENV GOSUMDB=off
+
 RUN go mod download
 
 # Copy source code
