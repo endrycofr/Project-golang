@@ -8,9 +8,10 @@ Project ini nantinya akan terintegrasi dengan frontend menggunakan **Vue.js** un
 - [x] API Authentication (Login & Register)
 - [x] CRUD User (Create, Read, Update, Delete)
 - [x] CRUD Campaign (Create, Update, Get Campaigns)
-- [x] Payment Gateway Integration (Midtrans / Xendit)
+- [x] Payment Gateway Integration (Midtrans)
 - [x] Admin Dashboard API
 - [ ] Unit Testing
+- [x] Deployment menggunakan kubernetes
 - [x] Integrasi dengan Frontend Vue.js
 
 ## 🛠️ Tech Stack
